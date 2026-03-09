@@ -3,7 +3,8 @@
  * If a repository is selected, returns /workspace/project/{repo-name}
  * Otherwise, returns /workspace/project
  *
- * @param selectedRepository The selected repository (e.g., "OpenHands/OpenHands" or "owner/repo")
+ * @param selectedRepository The selected repository in "owner/repo" format (GitHub/GitLab/Bitbucket)
+ *   or "org/project/repo" format (Azure DevOps)
  * @returns The git path to use
  */
 export function getGitPath(
@@ -13,10 +14,11 @@ export function getGitPath(
     return "/workspace/project";
   }
 
-  // Extract the repository name from "owner/repo" format
-  // The folder name is the second part after "/"
+  // Extract the repository name from the last path segment.
+  // GitHub/GitLab/Bitbucket use "owner/repo" (2 parts) → last part is the repo name.
+  // Azure DevOps uses "org/project/repo" (3 parts) → last part is the repo name.
   const parts = selectedRepository.split("/");
-  const repoName = parts.length > 1 ? parts[1] : parts[0];
+  const repoName = parts[parts.length - 1];
 
   return `/workspace/project/${repoName}`;
 }
